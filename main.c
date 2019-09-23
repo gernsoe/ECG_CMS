@@ -14,8 +14,9 @@ int main()
 	FILE *file;                  // Pointer to a file object
 	file = openfile("ECG.txt");
 
-    getNextData(file);          // Read Data from Sensor
-                                
+	int a = getNextData(file);          // Read Data from Sensor
+    printf("%i",a);
+
     lowPassFilter();            // Filter Data
                                 
     peakDetection(&qsr_params); // Perform Peak Detection
