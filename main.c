@@ -15,6 +15,7 @@ int main()
     qsr_params.SPKF = 0;
     qsr_params.THRESHOLD1 = 0;
     qsr_params.THRESHOLD2 = 0;
+    qsr_params.intervalCounter = 0;
 
     int loopCounter = 0;
 
@@ -53,9 +54,13 @@ int main()
 			outValue = moveWindow(sqr);
 			//printf("%d\n",outValue);
 
+			// push down on peak search array
 			for(int i = 1; i < 3; i++) {
 				qsr_params.search[3-i] = qsr_params.search[2-i];
 			}
+
+			// counter for RR intervals
+			qsr_params.intervalCounter++;
 
 			qsr_params.search[0] = outValue;
 
