@@ -5,5 +5,6 @@
 void lowPassFilter();
 
 // Implement additional filters
+void initArrays();
  
 #endif // FILTERS_H

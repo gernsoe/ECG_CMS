@@ -11,6 +11,8 @@ typedef struct QRS_params
    int NPKF; 
    int THRESHOLD1;
    int THRESHOLD2;
+   int peaks[100];
+   int search[3];
    // Add parameters that are missing
    // or of use to you
    
