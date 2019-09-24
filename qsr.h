@@ -13,9 +13,15 @@ typedef struct QRS_params
    int THRESHOLD2;
 
    int peaks[100];
-   int RR[8];
+   int RecentRR[8];
+   int RecentRR_OK[8];
    int search[3];
    int Rpeak;
+   int RR_high;
+   int RR_low;
+   int RR_Average1;
+   int RR_Average2;
+
 
    int intervalCounter;
 

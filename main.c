@@ -16,6 +16,10 @@ int main()
     qsr_params.THRESHOLD1 = 0;
     qsr_params.THRESHOLD2 = 0;
     qsr_params.intervalCounter = 0;
+    qsr_params.RR_high = 10000;
+    qsr_params.RR_low = 0;
+    qsr_params.RR_Average1 = 0;
+    qsr_params.RR_Average2 = 0;
 
     int loopCounter = 0;
 

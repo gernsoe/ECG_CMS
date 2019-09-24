@@ -10,12 +10,21 @@ void peakDetection(QRS_params *params) {
 		if (params->peaks[peakIndexCounter]>params->THRESHOLD1) {
 			// store Rpeak
 			params->Rpeak=params->peaks[peakIndexCounter];
+			// add RR to RecentRR
+			addRecentRR(params);
+			// print test
+			printf("first peak %i\n", params->RecentRR[0]);
+			// check if RR should be in RecentRR_OK
+			if (params->RR_low<params->RecentRR[0] && params->RecentRR[0]<params->RR_high) {
+				addRecentRR_OK(params);
+				updateRRboundaries(params);
 
-			addRRinterval(&params);
-			printf("first peak %i\n", params->Rpeak);
+			}
+			params->intervalCounter = 0;
 		} else {
-			updateThresholds(&params);
+			updateThresholds(params);
 		}
+
 		peakIndexCounter++;
 	}
 }
@@ -26,15 +35,24 @@ void updateThresholds(QRS_params *params) {
 	params->THRESHOLD2 = 0.5*params->THRESHOLD1;
 }
 
-void addRRinterval(QRS_params *params) {
+void addRecentRR(QRS_params *params) {
 	for(int i = 1; i < 8; i++){
-		params->RR[8-i] = params->RR[7-i];
+		params->RecentRR[8-i] = params->RecentRR[7-i];
 	}
-	params->RR[0] = params->intervalCounter;
-	params->intervalCounter = 0;
+	params->RecentRR[0] = params->intervalCounter;
 }
 
+void addRecentRR_OK(QRS_params *params) {
+	for(int i = 1; i < 8; i++){
+		params->RecentRR_OK[8-i] = params->RecentRR_OK[7-i];
+	}
+	params->RecentRR_OK[0] = params->intervalCounter;
+}
 
+void updateRRboundaries(QRS_params *params) {
+	params->SPKF = 0.125*params->peaks[peakIndexCounter] + 0.875*params->SPKF;
+
+}
 
 	/*
 	printf("NPKF = %i\n", params->NPKF);
