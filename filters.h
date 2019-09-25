@@ -1,10 +1,11 @@
 #ifndef FILTERS_H
 #define FILTERS_H
 
-// Feel free to change return statement and arguments
-void lowPassFilter();
+int lowPass(int *ys, int *xs);
+int highPass(int *ys, int *xs);
+int derivative(int *xs);
+int square(int *xs);
+int moveWindow(int *xs);
 
-// Implement additional filters
-void initArrays();
  
 #endif // FILTERS_H
