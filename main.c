@@ -3,6 +3,7 @@
 #include "qsr.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Main function for organizing the program execution.
 // The functions and object predefined are just for inspiration.
@@ -12,14 +13,18 @@ int main()
 {	
     QRS_params qsr_params;  // Instance of the made avaiable through: #include "qsr.h"
     qsr_params.NPKF = 0;
-    qsr_params.SPKF = 0;
+    qsr_params.SPKF = 3000;
     qsr_params.THRESHOLD1 = 0;
     qsr_params.THRESHOLD2 = 0;
-    qsr_params.intervalCounter = 0;
+    qsr_params.RtoR = 0;
     qsr_params.RR_high = 10000;
     qsr_params.RR_low = 0;
+    qsr_params.RR_miss = 0;
     qsr_params.RR_Average1 = 0;
     qsr_params.RR_Average2 = 0;
+
+    memset(qsr_params.RecentRR, 0, sizeof(int)*8);
+    memset(qsr_params.RecentRR_OK, 0, sizeof(int)*8);
 
     int loopCounter = 0;
 
@@ -64,7 +69,7 @@ int main()
 			}
 
 			// counter for RR intervals
-			qsr_params.intervalCounter++;
+			qsr_params.RtoR++;
 
 			qsr_params.search[0] = outValue;
 
