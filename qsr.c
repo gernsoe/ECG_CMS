@@ -5,8 +5,9 @@
 int peakIndexCounter = 0;
 
 void peakDetection(QRS_params *params) {
-	if (params->search[0]<params->search[1] && params->search[1]>params->search[2]) {
+	if (params->search[0]<params->search[1] && params->search[1]>params->search[2] && params->RtoR>=50) {
 		params->peaks[peakIndexCounter]=params->search[1];
+		params->peakToPeak[peakIndexCounter]=params->RtoR+params->peakToPeak[peakIndexCounter-1];
 		if (params->peaks[peakIndexCounter]>params->THRESHOLD1) {
 			// store Rpeak
 			params->Rpeak=params->peaks[peakIndexCounter];
@@ -18,7 +19,6 @@ void peakDetection(QRS_params *params) {
 
 			// check if RR should be in RecentRR_OK
 			if (params->RR_low<params->RecentRR[0] && params->RecentRR[0]<params->RR_high) {
-				addRecentRR(params);
 				addRecentRR_OK(params);
 				averageRR(params);
 				updateRRboundaries(params);
@@ -29,15 +29,23 @@ void peakDetection(QRS_params *params) {
 					searchBack(params);
 				}
 			}
-			printf("RR = %d\n", params->RtoR);
+
+			//printf("peaks[3] = %d\n",  params->peaks[3]);
+			/*
+			for (int i = 0; i < peakIndexCounter; i++) {
+				printf("peaks[%i] = %d\n",i ,  params->peaks[i]);
+			}
+			*/
+
 			params->RtoR = 0;
 		} else {
 			// Update NPFK, when a peak is found
 			params->NPKF = 0.125*params->peaks[peakIndexCounter] + 0.875*params->NPKF;
 			updateThresholds(params);
 		}
-
+		//printf("RR = %d, peak = %d\n", params->peakToPeak[peakIndexCounter], params->peaks[peakIndexCounter]);
 		peakIndexCounter++;
+
 	}
 }
 

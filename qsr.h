@@ -12,6 +12,7 @@ typedef struct QRS_params
    int THRESHOLD1;
    int THRESHOLD2;
    int peaks[100];
+   int peakToPeak[100];
    int RecentRR[8];
    int RecentRR_OK[8];
    int search[3];

@@ -12,8 +12,8 @@
 int main()
 {	
     QRS_params qsr_params;  // Instance of the made avaiable through: #include "qsr.h"
-    qsr_params.NPKF = 0;
-    qsr_params.SPKF = 3000;
+    qsr_params.NPKF = 3000;
+    qsr_params.SPKF = 4000;
     qsr_params.THRESHOLD1 = 0;
     qsr_params.THRESHOLD2 = 0;
     qsr_params.RtoR = 0;
@@ -25,6 +25,8 @@ int main()
 
     memset(qsr_params.RecentRR, 0, sizeof(int)*8);
     memset(qsr_params.RecentRR_OK, 0, sizeof(int)*8);
+    memset(qsr_params.peaks, 0, sizeof(int)*100);
+    memset(qsr_params.peakToPeak, 0, sizeof(int)*100);
 
     int loopCounter = 0;
 
@@ -69,13 +71,14 @@ int main()
 			}
 
 			// counter for RR intervals
-			qsr_params.RtoR++;
 
 			qsr_params.search[0] = outValue;
 
 			if (loopCounter > 2) {
 				peakDetection(&qsr_params); // Perform Peak Detection
 			}
+
+			qsr_params.RtoR++;
 			loopCounter++;
 
 	}
