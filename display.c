@@ -6,15 +6,14 @@
 int frequency = 250; //samples per second
 
 int cycle2ms(int cycle){
-	int raw = cycle/250;
-	int filtered = raw + 25 + 80 + 10 + 73;
-	return filtered;
+	int filtered = cycle/250;
+	int raw = cycle - 25 - 80 - 10 - 73;
+	return raw;
 }
 
 int ms2cycle(int ms){
-	int raw = ms - 25 - 80 - 10 - 73;
-	int seconds = raw*250;
-	return seconds;
+	int cycle = ms + 25 + 80 + 10 + 73;
+	return ms*250;
 }
 
 int pulse(int *Rs, int size){
@@ -22,7 +21,9 @@ int pulse(int *Rs, int size){
 	for (int i = 0; i < size; i++){
 		sum += Rs[i];
 	}
-	return sum/size;
+	sum = sum/250; //converts period of cycles to period of time
+	sum = 60*size/sum //number of R-peaks per minute
+	return sum;
 }
 
 char* display(int lastPeak, int peakValue, int pulse, char warningCode){
