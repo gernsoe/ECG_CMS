@@ -1,6 +1,7 @@
 #include "sensor.h"
 #include "filters.h"
 #include "qsr.h"
+#include "display.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -82,7 +83,6 @@ int main()
 			loopCounter++;
 
 	}
-
 
 	return 0;
 }
