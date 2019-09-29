@@ -18,10 +18,10 @@ void peakDetection(QRS_params *params) {
 			params->RpeakToRpeak[RpeakIndexCounter] = params->dataPointCounter; // Store the time between the R peaks
 			addRecentRR(params);
 
-			/*
-			printf("RR = %d, R[%d] = %d, T1 = %d, T2 = %d\n", params->RpeakToRpeak[RpeakIndexCounter],
-								RpeakIndexCounter, params->Rpeaks[RpeakIndexCounter], params->THRESHOLD1, params->THRESHOLD2);
-								*/
+
+			printf("RR = %d, R[%d] = %d, T1 = %d, T2 = %d, SB = %d\n", params->RpeakToRpeak[RpeakIndexCounter],
+								RpeakIndexCounter, params->Rpeaks[RpeakIndexCounter], params->THRESHOLD1, params->THRESHOLD2, searchBackCounterTest);
+
 
 			// check if RR should be in RecentRR_OK
 			//printf("Low = %d, RR = %d, high = %d, miss = %d\n", params->RR_low, params->RtoRcounter, params->RR_high, params->RR_miss );
@@ -52,7 +52,7 @@ void peakDetection(QRS_params *params) {
 		searchBack(params);
 	}
 
-	printf("RR = %d, Rpeak = %d, total = %d, SB = %d\n", params->RtoRcounter, params->RpeakToRpeak[RpeakIndexCounter-1], params->dataPointCounter, searchBackCounterTest);  //This shows the when searchBack should happen
+	//printf("RR = %d, RR_miss = %d, Rpeak = %d, total = %d, SB = %d\n", params->RtoRcounter, params->RR_miss, params->RpeakToRpeak[RpeakIndexCounter-1], params->dataPointCounter, searchBackCounterTest);  //This shows the when searchBack should happen
 }
 
 
@@ -128,7 +128,7 @@ void averageRR(QRS_params *params){
 
 void searchBack(QRS_params *params) {
 	for (int i = peakIndexCounter; i > 0; i--){ 					// loops through peaks to find a missed peak2
-		if (params->peaks[i] > params->THRESHOLD2) { 				// if peak2 is higher than threshold2, then it's an Rpeak
+		if (params->peaks[i] > params->THRESHOLD2 && params->peaks[i] < params->THRESHOLD1) { 				// if peak2 is higher than threshold2, then it's an Rpeak
 			params->Rpeaks[RpeakIndexCounter] = params->peaks[i];
 			params->SPKF = 0.25*params->Rpeaks[RpeakIndexCounter] + 0.75*params->SPKF;
 			params->RpeakToRpeak[RpeakIndexCounter] = 										// RR is calculated between found peak and

@@ -22,7 +22,7 @@ int pulse(int *Rs, int size){
 		sum += Rs[i];
 	}
 	sum = sum/250; //converts period of cycles to period of time
-	sum = 60*size/sum //number of R-peaks per minute
+	sum = 60*size/sum; //number of R-peaks per minute
 	return sum;
 }
 

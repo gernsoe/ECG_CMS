@@ -44,10 +44,11 @@ int main()
 	int outValue;
 
 	while(1){
-
+		/*
 		if (loopCounter > 3000) {
 			break;
 		}
+		*/
 
 			//pushes down queues
 			for (int i = 1; i < 33; i++){
