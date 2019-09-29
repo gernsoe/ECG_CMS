@@ -29,11 +29,11 @@ char* display(int lastPeak, int peakValue, int pulse, char warningCode){
 	char warning[60];
 	switch(warningCode){
 	case 'B':
-		strcpy(warning, "LOW R-PEAK INTENSITY\n(under 2000)\n5 MISSED R-PEAKS\n");
+		strcpy(warning, "LOW R-PEAK VALUE\n5 MISSED R-PEAKS\n");
 		break;
 
 	case 'L':
-		strcpy(warning, "LOW R-PEAK INTENSITY\n(under 2000)\n");
+		strcpy(warning, "LOW R-PEAK VALUE\n");
 		break;
 
 	case 'M':
@@ -62,7 +62,7 @@ char* display(int lastPeak, int peakValue, int pulse, char warningCode){
 
 	strcat(message,"Warnings:\n");
 	strcat(message,warning);
-	strcat(message,"************************\n");
+	strcat(message, "************************\n");
 
 	return message;
 }
