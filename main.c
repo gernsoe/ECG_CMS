@@ -12,21 +12,24 @@
 int main()
 {	
     QRS_params qsr_params;  // Instance of the made avaiable through: #include "qsr.h"
-    qsr_params.NPKF = 3000;
-    qsr_params.SPKF = 4000;
+    qsr_params.NPKF = 0;
+    qsr_params.SPKF = 0;
     qsr_params.THRESHOLD1 = 0;
     qsr_params.THRESHOLD2 = 0;
-    qsr_params.RtoR = 0;
     qsr_params.RR_high = 10000;
     qsr_params.RR_low = 0;
-    qsr_params.RR_miss = 0;
+    qsr_params.RtoRcounter=0;
+    qsr_params.dataPointCounter=0;
+    qsr_params.RR_miss = 300;
     qsr_params.RR_Average1 = 0;
     qsr_params.RR_Average2 = 0;
 
     memset(qsr_params.RecentRR, 0, sizeof(int)*8);
     memset(qsr_params.RecentRR_OK, 0, sizeof(int)*8);
-    memset(qsr_params.peaks, 0, sizeof(int)*100);
-    memset(qsr_params.peakToPeak, 0, sizeof(int)*100);
+    memset(qsr_params.peaks, 0, sizeof(int)*1000);
+    memset(qsr_params.Rpeaks, 0, sizeof(int)*1000);
+    memset(qsr_params.peakToPeak, 0, sizeof(int)*1000);
+    memset(qsr_params.RpeakToRpeak, 0, sizeof(int)*1000);
 
     int loopCounter = 0;
 
@@ -40,6 +43,11 @@ int main()
 	int outValue;
 
 	while(1){
+
+		if (loopCounter > 3000) {
+			break;
+		}
+
 			//pushes down queues
 			for (int i = 1; i < 33; i++){
 				raw[33-i] = raw[32-i];
@@ -77,10 +85,9 @@ int main()
 			if (loopCounter > 2) {
 				peakDetection(&qsr_params); // Perform Peak Detection
 			}
-
-			qsr_params.RtoR++;
+			qsr_params.dataPointCounter++;
+			qsr_params.RtoRcounter++;
 			loopCounter++;
-
 	}
 
 
