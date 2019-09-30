@@ -9,6 +9,7 @@
 // Main function for organizing the program execution.
 // The functions and object predefined are just for inspiration.
 // Please change orden,names arguments to fit your solution.
+int loopCounter = 0;
 
 int main()
 {	
@@ -24,6 +25,7 @@ int main()
     qsr_params.RR_miss = 300;
     qsr_params.RR_Average1 = 0;
     qsr_params.RR_Average2 = 0;
+    qsr_params.RR_WarningCounter = 0;
 
     memset(qsr_params.RecentRR, 0, sizeof(int)*8);
     memset(qsr_params.RecentRR_OK, 0, sizeof(int)*8);
@@ -31,8 +33,6 @@ int main()
     memset(qsr_params.Rpeaks, 0, sizeof(int)*1000);
     memset(qsr_params.peakToPeak, 0, sizeof(int)*1000);
     memset(qsr_params.RpeakToRpeak, 0, sizeof(int)*1000);
-
-    int loopCounter = 0;
 
 	FILE *file = openfile("ECG.txt");
 	int raw[33] = {0};
@@ -90,9 +90,20 @@ int main()
 			qsr_params.dataPointCounter++;
 			qsr_params.RtoRcounter++;
 			loopCounter++;
+			//incrementCounters(qsr_params);
+
+			if (qsr_params.RR_WarningCounter >= 5) {
+
+			}
 	}
 
 	return 0;
+}
+
+void incrementCounters(QRS_params *params) {
+	//params.dataPointCounter++;
+	//params.RtoRcounter++;
+	loopCounter++;
 }
 
 
