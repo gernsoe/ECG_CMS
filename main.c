@@ -14,6 +14,7 @@ int loopCounter = 0;
 
 int main()
 {	
+	FILE *output = fopen("OUT.txt","w");
 	char* filename = "ECG.txt";
     QRS_params qsr_params;  // Instance of the made avaiable through: #include "qsr.h"
     qsr_params.NPKF = 0;
@@ -91,7 +92,7 @@ int main()
 			qsr_params.search[0] = outValue;
 
 			if (loopCounter > 2) {
-				peakDetection(&qsr_params); // Perform Peak Detection
+				peakDetection(&qsr_params,output); // Perform Peak Detection
 			}
 			qsr_params.PtoPcounter++;
 			qsr_params.RtoRcounter++;
@@ -105,11 +106,16 @@ int main()
 				warning += 1;
 			}
 			if(RpeakIndexCounter > 4){
-				printf(display(qsr_params.RtoRcounter*1000/250,qsr_params.Rpeaks[RpeakIndexCounter-1],pulse(qsr_params.RpeakToRpeak + RpeakIndexCounter - 5, 4),warning));
+				printf(display(cycle2ms(qsr_params.RtoRcounter),qsr_params.Rpeaks[RpeakIndexCounter-1],qsr_params.RpeakToRpeak[RpeakIndexCounter-1]*1000/250,warning));
 			}
-
+			fprintf(output,"%d\n",outValue);
+			fprintf(output,"%d\n",qsr_params.THRESHOLD1);
+			fprintf(output,"%d\n",qsr_params.THRESHOLD2);
+			fprintf(output,"%d\n",foundRpeak);
+			fprintf(output,"%d\n",warning);
 	}
-
+	fclose(file);
+	//fclose(output);
 	return 0;
 }
 

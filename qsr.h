@@ -1,10 +1,12 @@
 #ifndef QSR_H
 #define QSR_H
+#include <stdio.h>
 
 // Header file for QRS functionality 
 // it is recommended to use the structure "QRS_parameters"
 // to organize all variables and parameters
 int RpeakIndexCounter;
+int foundRpeak;
 typedef struct QRS_params
 { // Structure for QRS parameters
    int SPKF;					// Estimated average Rpeak value
@@ -30,7 +32,7 @@ typedef struct QRS_params
 
 } QRS_params;
 
-void peakDetection(QRS_params *params);
+void peakDetection(QRS_params *params,FILE* output);
 
 void updateThresholds(QRS_params *params);
 
@@ -46,7 +48,7 @@ void averageRR(QRS_params *params);
 
 void addRecentRR(QRS_params *params);
 
-void searchBack(QRS_params *params);
+void searchBack(QRS_params *params,FILE* output);
 
 void increment(int index, int incrementValue, int PorR);
 

@@ -9,21 +9,24 @@ double cpu_time_used;
 int peakIndexCounter = 0;				// Used to navigate forward when storing peaks
 int RpeakIndexCounter = 0;				// Used to navigate forward when storing Rpeaks
 int searchBackCounter = 0;				// Used to track searchBacks
+int foundRpeak;
 
-void peakDetection(QRS_params *params) {
+void peakDetection(QRS_params *params,FILE *output) {
 	start = clock();
+	foundRpeak = 0;
 	if (params->search[0]<params->search[1] && params->search[1]>params->search[2]  // If x_n-1 < x_n < x_n+1 and 200 ms then add to peaks
 				&& 50<=params->RtoRcounter) {
 		params->peaks[peakIndexCounter] = params->search[1];	// Add x_n to peaks
 		params->peakToPeak[peakIndexCounter] = params->PtoPcounter;	// Add the time the peak was found
 
 		if (params->peaks[peakIndexCounter]>params->THRESHOLD1) {	// If found x_n > Threshhold1
+			foundRpeak = 1;
 			params->Rpeaks[RpeakIndexCounter] = params->peaks[peakIndexCounter]; // Store x_n in the R peak array
 			params->RpeakToRpeak[RpeakIndexCounter] = params->RtoRcounter; // Add the time the R peak was found
 			addRecentRR(params);
 
 			//printf("RR = %d, R[%d] = %d, T1 = %d, T2 = %d\n", params->RpeakToRpeak[RpeakIndexCounter],
-								RpeakIndexCounter, params->Rpeaks[RpeakIndexCounter], params->THRESHOLD1, params->THRESHOLD2);
+								//RpeakIndexCounter, params->Rpeaks[RpeakIndexCounter], params->THRESHOLD1, params->THRESHOLD2);
 
 
 			//printf("Low = %d, RR = %d, high = %d, miss = %d\n", params->RR_low, params->RtoRcounter, params->RR_high, params->RR_miss );
@@ -50,7 +53,7 @@ void peakDetection(QRS_params *params) {
 	}
 
 	if (params->RtoRcounter > params->RR_miss) {	// If the interval between heartbeats get too large
-		searchBack(params);
+		searchBack(params,output);
 	}
 
 	end = clock();
@@ -141,7 +144,7 @@ void averageRR(QRS_params *params){		// Calculates the average RR interval, base
 
 }
 
-void searchBack(QRS_params *params) {
+void searchBack(QRS_params *params,FILE *output) {
 	start = clock();
 	searchBackCounter++;
 	int peakCycleSum = 0;
@@ -155,7 +158,11 @@ void searchBack(QRS_params *params) {
 			params->RpeakToRpeak[RpeakIndexCounter] = params->RtoRcounter - peakCycleSum + params->PtoPcounter;
 			addRecentRR(params);
 			updateRRboundariesSearchBack(params);
-			params->RtoRcounter = 0;
+			params->RtoRcounter = params->RtoRcounter-params->RpeakToRpeak[RpeakIndexCounter];
+			fseek(output,-(params->RtoRcounter)*5-2,SEEK_CUR);
+			fprintf(output,"%d\n",1);
+			fseek(output,(params->RtoRcounter)*5+1,SEEK_CUR);
+
 			printf("SB\n");
 			break;
 		} else if (params->peaks[i] > params->THRESHOLD1) {		// If the Rpeak has already been found, searchback is stopped

@@ -6,8 +6,8 @@
 int frequency = 250; //samples per second
 
 int cycle2ms(int cycle){
-	int filtered = cycle/250;
-	int raw = filtered - 25 - 80 - 10 - 73;
+	int filtered = cycle*1000/250;
+	int raw = filtered + 25 + 80 + 10 + 73;
 	return raw;
 }
 
