@@ -1,34 +1,28 @@
 #include "display.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-
-int frequency = 250; //samples per second
+#include <string.h>0
 
 int cycle2ms(int cycle){
-	int filtered = cycle*1000/250;
-	int raw = filtered + 25 + 80 + 10 + 73;
-	return raw;
+	return (cycle*1000/250) + 25 + 80 + 10 + 73;
 }
 
-int ms2cycle(int ms){
-	int cycle = ms + 25 + 80 + 10 + 73;
-	return cycle*250;
+int pulse(int cycles){
+	return 250*60/cycles;
 }
 
-int pulse(int *Rs, int size){
-	int sum = Rs[size-1]-Rs[0];
-	/*for (int i = 1; i < size; i++){
-		sum += Rs[i];
-	}*/
-	//sum = sum/250; //converts period of cycles to period of time
-
-	sum = 250*60*size/sum; //number of R-peaks per minute
-	return sum;
-}
 
 char* display(int lastPeak, int peakValue, int pulse, int warningCode){
+
+	//INITIALIZE
 	char warning[40];
+	char *message;
+	message = malloc(250);
+	char line[26];
+	//----------
+
+
+	//CHOOSE WARNING CODE
 	switch(warningCode){
 	case 3:
 		strcpy(warning, "LOW R-PEAK VALUE\n5 MISSED R-PEAKS\n");
@@ -49,10 +43,13 @@ char* display(int lastPeak, int peakValue, int pulse, int warningCode){
 	default:
 		strcpy(warning, "ERROR\n");
 	}
-	char *message;
-	message = malloc(250);
+	//-------------------
+
+
+
+	//ASSEMBLE DISPLAY---------------------------
 	strcpy(message, "************************\n");
-	char line[26];
+
 	sprintf(line,"Last R-peak: %d ms ago\n",lastPeak);
 	strcat(message,line);
 
@@ -64,7 +61,9 @@ char* display(int lastPeak, int peakValue, int pulse, int warningCode){
 
 	strcat(message,"Warnings:\n");
 	strcat(message,warning);
+
 	strcat(message, "************************\n");
+	//-------------------------------------------
 
 	return message;
 }

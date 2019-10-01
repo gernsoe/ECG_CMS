@@ -7,21 +7,25 @@
 #include <string.h>
 #include <limits.h>
 
-// Main function for organizing the program execution.
-// The functions and object predefined are just for inspiration.
-// Please change orden,names arguments to fit your solution.
-int loopCounter = 0;
 
 int main()
 {	
+	//Define stuff-----------------
+	char* filename = "ECG.txt";
 	FILE *fValues = fopen("values.txt","w");
 	FILE *fThreshold1 = fopen("threshold1.txt","w");
 	FILE *fThreshold2 = fopen("threshold2.txt","w");
 	FILE *fRpeak = fopen("Rpeak.txt","w");
 	FILE *fSearchBack = fopen("searchBack.txt","w");
 	FILE *fWarning = fopen("warning.txt","w");
-	char* filename = "ECG.txt";
+	FILE *file = openfile(filename);
     QRS_params qsr_params;  // Instance of the made avaiable through: #include "qsr.h"
+    int outValue;
+    int warning;
+    //-----------------------------
+
+    //Initialise values----------------
+    int loopCounter = 0;
     qsr_params.NPKF = 0;
     qsr_params.SPKF = 0;
     qsr_params.THRESHOLD1 = 0;
@@ -34,33 +38,36 @@ int main()
     qsr_params.RR_Average1 = 0;
     qsr_params.RR_Average2 = 0;
     qsr_params.RR_WarningCounter = 0;
-
     memset(qsr_params.RecentRR, 0, sizeof(int)*8);
     memset(qsr_params.RecentRR_OK, 0, sizeof(int)*8);
     memset(qsr_params.peaks, 0, sizeof(int)*100);
     memset(qsr_params.Rpeaks, 0, sizeof(int)*100);
     memset(qsr_params.peakToPeak, 0, sizeof(int)*100);
     memset(qsr_params.RpeakToRpeak, 0, sizeof(int)*100);
+    int raw[33] = {0};
+    int low[33] = {0};
+    int high[33] = {0};
+    int der[33] = {0};
+    int sqr[33] = {0};
+    //-----------------------------------
 
-	FILE *file = openfile(filename);
+    //Exit if no input------
 	if(file == NULL){
+		fclose(file);
+		fclose(fValues);
+		fclose(fThreshold1);
+		fclose(fThreshold2);
+		fclose(fWarning);
+		fclose(fRpeak);
+		fclose(fSearchBack);
 		return -1;
 	}
+	//----------------------
 
-	int raw[33] = {0};
-	int low[33] = {0};
-	int high[33] = {0};
-	int der[33] = {0};
-	int sqr[33] = {0};
 
-	int outValue;
 
 	while(1){
-		/*
-		if (loopCounter > 3000) {
-			break;
-		}
-		*/
+			warning = 0;
 
 			//pushes down queues
 			for (int i = 1; i < 33; i++){
@@ -70,56 +77,76 @@ int main()
 				der[33-i] = der[32-i];
 				sqr[33-i] = sqr[32-i];
 			}
+			//------------------
+
+
+			//Get next data point
 			raw[0] = getNextData(file);
-			if(raw[0] == INT_MIN){
+			if(raw[0] == INT_MIN){ //End if magic number is returned (meaning end of file)
 				break;
 			}
-			//printf("-------------\n");
-			//printf("%d\n",raw[0]);
+			//-------------------
+
+
+			//Apply filters
 			low[0] = lowPass(low,raw);
-			//printf("%d\n",low[0]);
 			high[0] = highPass(high,low);
-			//printf("%d\n",high[0]);
 			der[0] = derivative(high);
-			//printf("%d\n",der[0]);
 			sqr[0] = square(der);
-			//printf("%d\n",sqr[0]);
 			outValue = moveWindow(sqr);
-			//printf("%d\n",outValue);
+			//-------------
+
 
 			// push down on peak search array
 			for(int i = 1; i < 3; i++) {
 				qsr_params.search[3-i] = qsr_params.search[2-i];
 			}
-
-			// counter for RR intervals
-
 			qsr_params.search[0] = outValue;
+			//-------------------------------
 
+
+			//Perform peak detection
 			if (loopCounter > 2) {
 				peakDetection(&qsr_params,fRpeak,fSearchBack,loopCounter); // Perform Peak Detection
 			}
-			qsr_params.PtoPcounter++;
-			qsr_params.RtoRcounter++;
-			loopCounter++;
-			//incrementCounters(qsr_params);
-			int warning = 0;
+			//----------------------
+
+
+			//Choose error warning
 			if (qsr_params.RR_WarningCounter >= 5) {
 				warning += 2;
 			}
-			if (qsr_params.Rpeaks[RpeakIndexCounter-1] < 2000) {
+			if (qsr_params.Rpeaks[qsr_params.RpeakIndexCounter-1] < 2000) {
 				warning += 1;
 			}
-			if(RpeakIndexCounter > 4){
-				printf(display(cycle2ms(qsr_params.RtoRcounter),qsr_params.Rpeaks[RpeakIndexCounter-1],qsr_params.RpeakToRpeak[RpeakIndexCounter-1]*1000/250,warning));
+			//---------------------
+
+
+			//Display-------------
+			if(qsr_params.RpeakIndexCounter > 0){
+				printf(display(cycle2ms(qsr_params.RtoRcounter),qsr_params.Rpeaks[qsr_params.RpeakIndexCounter-1],pulse(qsr_params.RpeakToRpeak[qsr_params.RpeakIndexCounter-1]),warning));
 			}
+			//--------------------
+
+
+			//Write to output files
 			fprintf(fValues,"%d\n",outValue);
 			fprintf(fThreshold1,"%d\n",qsr_params.THRESHOLD1);
 			fprintf(fThreshold2,"%d\n",qsr_params.THRESHOLD2);
 			fprintf(fWarning,"%d\n",warning);
-			//rPeaks
-			//searchBack
+			//rPeaks and searchBack is handled in qsr.c
+			//---------------------
+
+
+			//Increment indexes
+			loopCounter++;
+			qsr_params.PtoPcounter++;
+			qsr_params.RtoRcounter++;
+			//-----------------
+
 	}
+
+	//Close files-------
 	fclose(file);
 	fclose(fValues);
 	fclose(fThreshold1);
@@ -127,14 +154,11 @@ int main()
 	fclose(fWarning);
 	fclose(fRpeak);
 	fclose(fSearchBack);
-	//fclose(output);
+	//------------------
+
+
 	return 0;
 }
 
-void incrementCounters(QRS_params *params) {
-	//params.dataPointCounter++;
-	//params.RtoRcounter++;
-	loopCounter++;
-}
 
 

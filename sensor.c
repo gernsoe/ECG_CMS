@@ -6,12 +6,11 @@
 int getNextData(FILE *file)
 {
 	int value;
-
 	if(!(fscanf(file,"%i",&value) == 1)){
 		printf("End of file");
-		return INT_MIN;
+		return INT_MIN; //Magic value
 	}
-    return value; // return sensor value
+    return value;
 }
 
 FILE* openfile(const char *filename)

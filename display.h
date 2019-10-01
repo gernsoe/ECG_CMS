@@ -4,15 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//Frequency of measurement: 250/second
-
-//Takes cycle number and returns millisecond, counting chronologically
+//returns number of millisecond since an event, given number of cycles since event
 int cycle2ms(int cycle);
-//returns filtered cycle given timestamp, counting chronologically
-int ms2cycle(int ms);
 
-//returns pulse given an array of timestamps of "size" previous R-peaks
-int pulse(int *Rs, int size);
+//return pulse given number of cycles between two beats
+int pulse(int cycles);
 
 //Returns string containing output given data
 char* display(int lastPeak, int peakValue, int pulse, int warningCode);
