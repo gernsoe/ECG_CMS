@@ -21,7 +21,7 @@ int main()
     qsr_params.RR_high = 10000;
     qsr_params.RR_low = 0;
     qsr_params.RtoRcounter=0;
-    qsr_params.dataPointCounter=0;
+    qsr_params.PtoPcounter=0;
     qsr_params.RR_miss = 300;
     qsr_params.RR_Average1 = 0;
     qsr_params.RR_Average2 = 0;
@@ -29,10 +29,10 @@ int main()
 
     memset(qsr_params.RecentRR, 0, sizeof(int)*8);
     memset(qsr_params.RecentRR_OK, 0, sizeof(int)*8);
-    memset(qsr_params.peaks, 0, sizeof(int)*1000);
-    memset(qsr_params.Rpeaks, 0, sizeof(int)*1000);
-    memset(qsr_params.peakToPeak, 0, sizeof(int)*1000);
-    memset(qsr_params.RpeakToRpeak, 0, sizeof(int)*1000);
+    memset(qsr_params.peaks, 0, sizeof(int)*100);
+    memset(qsr_params.Rpeaks, 0, sizeof(int)*100);
+    memset(qsr_params.peakToPeak, 0, sizeof(int)*100);
+    memset(qsr_params.RpeakToRpeak, 0, sizeof(int)*100);
 
 	FILE *file = openfile("ECG.txt");
 	int raw[33] = {0};
@@ -87,7 +87,7 @@ int main()
 			if (loopCounter > 2) {
 				peakDetection(&qsr_params); // Perform Peak Detection
 			}
-			qsr_params.dataPointCounter++;
+			qsr_params.PtoPcounter++;
 			qsr_params.RtoRcounter++;
 			loopCounter++;
 			//incrementCounters(qsr_params);

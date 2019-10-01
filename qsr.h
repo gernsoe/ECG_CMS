@@ -11,10 +11,10 @@ typedef struct QRS_params
    int NPKF; 					// Estimated average noise peak value
    int THRESHOLD1;				// All peaks higher than this is classified as an Rpeak
    int THRESHOLD2;				// Used in searchback to find missed Rpeaks
-   int peaks[1000];				// All found peaks are stored here
-   int Rpeaks[1000];			// All found Rpeaks are stored here
-   int peakToPeak[1000];		// Contains timestamp from every peak
-   int RpeakToRpeak[1000];		// Contains timestamp from every Rpeak
+   int peaks[100];				// All found peaks are stored here
+   int Rpeaks[100];			// All found Rpeaks are stored here
+   int peakToPeak[100];		// Contains timestamp from every peak
+   int RpeakToRpeak[100];		// Contains timestamp from every Rpeak
    int RecentRR[8];				// Contains the 8 most recent RR intervals
    int RecentRR_OK[8];			// Contains the 8 most recent RR intervals, where RR_low < RR < RR_high
    int search[3];				// Stores 3 datapoints used for determining if a peak is found
@@ -24,7 +24,7 @@ typedef struct QRS_params
    int RR_Average1;				// The average RR interval based on RecentRR
    int RR_Average2;				// The average RR interval based on RecentRR_OK
 
-   int dataPointCounter;		// Counts every data input
+   int PtoPcounter;				// Counts data input between peaks
    int RtoRcounter;				// Counts data input between Rpeaks
    int RR_WarningCounter;		// Counts when RR < RR_low or RR_miss < RR
 
@@ -47,6 +47,8 @@ void averageRR(QRS_params *params);
 void addRecentRR(QRS_params *params);
 
 void searchBack(QRS_params *params);
+
+void increment(int index, int incrementValue, int PorR);
 
 
 #endif // QSR_H
