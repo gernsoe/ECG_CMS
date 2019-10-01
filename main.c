@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 // Main function for organizing the program execution.
 // The functions and object predefined are just for inspiration.
@@ -13,6 +14,7 @@ int loopCounter = 0;
 
 int main()
 {	
+	char* filename = "ECG.txt";
     QRS_params qsr_params;  // Instance of the made avaiable through: #include "qsr.h"
     qsr_params.NPKF = 0;
     qsr_params.SPKF = 0;
@@ -34,7 +36,11 @@ int main()
     memset(qsr_params.peakToPeak, 0, sizeof(int)*100);
     memset(qsr_params.RpeakToRpeak, 0, sizeof(int)*100);
 
-	FILE *file = openfile("ECG.txt");
+	FILE *file = openfile(filename);
+	if(file == NULL){
+		return -1;
+	}
+
 	int raw[33] = {0};
 	int low[33] = {0};
 	int high[33] = {0};
@@ -59,7 +65,7 @@ int main()
 				sqr[33-i] = sqr[32-i];
 			}
 			raw[0] = getNextData(file);
-			if(raw[0] == -9999){
+			if(raw[0] == INT_MIN){
 				break;
 			}
 			//printf("-------------\n");
@@ -91,10 +97,17 @@ int main()
 			qsr_params.RtoRcounter++;
 			loopCounter++;
 			//incrementCounters(qsr_params);
-
+			int warning = 0;
 			if (qsr_params.RR_WarningCounter >= 5) {
-
+				warning += 2;
 			}
+			if (qsr_params.Rpeaks[RpeakIndexCounter-1] < 2000) {
+				warning += 1;
+			}
+			if(RpeakIndexCounter > 4){
+				printf(display(qsr_params.RtoRcounter*1000/250,qsr_params.Rpeaks[RpeakIndexCounter-1],pulse(qsr_params.RpeakToRpeak + RpeakIndexCounter - 5, 4),warning));
+			}
+
 	}
 
 	return 0;
