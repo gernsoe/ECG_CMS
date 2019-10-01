@@ -11,7 +11,7 @@ int RpeakIndexCounter = 0;				// Used to navigate forward when storing Rpeaks
 int searchBackCounter = 0;				// Used to track searchBacks
 int foundRpeak;
 
-void peakDetection(QRS_params *params,FILE *output) {
+void peakDetection(QRS_params *params, FILE *fRpeak, FILE *fSearchBack, int loopCount) {
 	start = clock();
 	foundRpeak = 0;
 	if (params->search[0]<params->search[1] && params->search[1]>params->search[2]  // If x_n-1 < x_n < x_n+1 and 200 ms then add to peaks
@@ -20,7 +20,7 @@ void peakDetection(QRS_params *params,FILE *output) {
 		params->peakToPeak[peakIndexCounter] = params->PtoPcounter;	// Add the time the peak was found
 
 		if (params->peaks[peakIndexCounter]>params->THRESHOLD1) {	// If found x_n > Threshhold1
-			foundRpeak = 1;
+			fprintf(fRpeak,"%d\n",loopCount);
 			params->Rpeaks[RpeakIndexCounter] = params->peaks[peakIndexCounter]; // Store x_n in the R peak array
 			params->RpeakToRpeak[RpeakIndexCounter] = params->RtoRcounter; // Add the time the R peak was found
 			addRecentRR(params);
@@ -53,7 +53,7 @@ void peakDetection(QRS_params *params,FILE *output) {
 	}
 
 	if (params->RtoRcounter > params->RR_miss) {	// If the interval between heartbeats get too large
-		searchBack(params,output);
+		searchBack(params,fSearchBack,loopCount);
 	}
 
 	end = clock();
@@ -144,7 +144,7 @@ void averageRR(QRS_params *params){		// Calculates the average RR interval, base
 
 }
 
-void searchBack(QRS_params *params,FILE *output) {
+void searchBack(QRS_params *params,FILE *output,int loopCount) {
 	start = clock();
 	searchBackCounter++;
 	int peakCycleSum = 0;
@@ -155,13 +155,11 @@ void searchBack(QRS_params *params,FILE *output) {
 			for (int j = peakIndexCounter; j > i; j--) {
 				peakCycleSum = params->peakToPeak[j];
 			}
-			params->RpeakToRpeak[RpeakIndexCounter] = params->RtoRcounter - peakCycleSum + params->PtoPcounter;
+			params->RpeakToRpeak[RpeakIndexCounter] = params->RtoRcounter - (peakCycleSum + params->PtoPcounter);
 			addRecentRR(params);
 			updateRRboundariesSearchBack(params);
 			params->RtoRcounter = params->RtoRcounter-params->RpeakToRpeak[RpeakIndexCounter];
-			fseek(output,-(params->RtoRcounter)*5-2,SEEK_CUR);
-			fprintf(output,"%d\n",1);
-			fseek(output,(params->RtoRcounter)*5+1,SEEK_CUR);
+			fprintf(output,"%d\n",(loopCount-params->RtoRcounter));
 
 			printf("SB\n");
 			break;

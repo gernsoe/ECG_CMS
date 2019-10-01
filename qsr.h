@@ -32,7 +32,7 @@ typedef struct QRS_params
 
 } QRS_params;
 
-void peakDetection(QRS_params *params,FILE* output);
+void peakDetection(QRS_params *params,FILE* fRpeak,FILE* fSearchBack,int loopCount);
 
 void updateThresholds(QRS_params *params);
 
@@ -48,7 +48,7 @@ void averageRR(QRS_params *params);
 
 void addRecentRR(QRS_params *params);
 
-void searchBack(QRS_params *params,FILE* output);
+void searchBack(QRS_params *params,FILE* output,int loopCount);
 
 void increment(int index, int incrementValue, int PorR);
 

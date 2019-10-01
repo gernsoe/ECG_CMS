@@ -14,7 +14,12 @@ int loopCounter = 0;
 
 int main()
 {	
-	FILE *output = fopen("OUT.txt","w");
+	FILE *fValues = fopen("values.txt","w");
+	FILE *fThreshold1 = fopen("threshold1.txt","w");
+	FILE *fThreshold2 = fopen("threshold2.txt","w");
+	FILE *fRpeak = fopen("Rpeak.txt","w");
+	FILE *fSearchBack = fopen("searchBack.txt","w");
+	FILE *fWarning = fopen("warning.txt","w");
 	char* filename = "ECG.txt";
     QRS_params qsr_params;  // Instance of the made avaiable through: #include "qsr.h"
     qsr_params.NPKF = 0;
@@ -92,7 +97,7 @@ int main()
 			qsr_params.search[0] = outValue;
 
 			if (loopCounter > 2) {
-				peakDetection(&qsr_params,output); // Perform Peak Detection
+				peakDetection(&qsr_params,fRpeak,fSearchBack,loopCounter); // Perform Peak Detection
 			}
 			qsr_params.PtoPcounter++;
 			qsr_params.RtoRcounter++;
@@ -108,13 +113,20 @@ int main()
 			if(RpeakIndexCounter > 4){
 				printf(display(cycle2ms(qsr_params.RtoRcounter),qsr_params.Rpeaks[RpeakIndexCounter-1],qsr_params.RpeakToRpeak[RpeakIndexCounter-1]*1000/250,warning));
 			}
-			fprintf(output,"%d\n",outValue);
-			fprintf(output,"%d\n",qsr_params.THRESHOLD1);
-			fprintf(output,"%d\n",qsr_params.THRESHOLD2);
-			fprintf(output,"%d\n",foundRpeak);
-			fprintf(output,"%d\n",warning);
+			fprintf(fValues,"%d\n",outValue);
+			fprintf(fThreshold1,"%d\n",qsr_params.THRESHOLD1);
+			fprintf(fThreshold2,"%d\n",qsr_params.THRESHOLD2);
+			fprintf(fWarning,"%d\n",warning);
+			//rPeaks
+			//searchBack
 	}
 	fclose(file);
+	fclose(fValues);
+	fclose(fThreshold1);
+	fclose(fThreshold2);
+	fclose(fWarning);
+	fclose(fRpeak);
+	fclose(fSearchBack);
 	//fclose(output);
 	return 0;
 }
