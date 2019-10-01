@@ -1,7 +1,7 @@
 #include "display.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>0
+#include <string.h>
 
 int cycle2ms(int cycle){
 	return (cycle*1000/250) + 25 + 80 + 10 + 73;
@@ -18,6 +18,9 @@ char* display(int lastPeak, int peakValue, int pulse, int warningCode){
 	char warning[40];
 	char *message;
 	message = malloc(250);
+#include <time.h>
+clock_t start, end;
+double cpu_time_used;
 	char line[26];
 	//----------
 

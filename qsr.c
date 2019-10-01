@@ -1,10 +1,8 @@
 #include "qsr.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 int peakIndexCounter = 0;				// Used to navigate forward when storing peaks
-int params->RpeakIndexCounter = 0;				// Used to navigate forward when storing Rpeaks
 int searchBackCounter = 0;				// Used to track searchBacks
 
 void peakDetection(QRS_params *params, FILE *fRpeak, FILE *fSearchBack, int loopCount) {
@@ -18,7 +16,7 @@ void peakDetection(QRS_params *params, FILE *fRpeak, FILE *fSearchBack, int loop
 
 			fprintf(fRpeak,"%d\n",loopCount);  // Add current place in data to rPeak file
 
-			params->Rpeaks[params->params->RpeakIndexCounter] = params->peaks[peakIndexCounter]; // Store x_n in the R peak array
+			params->Rpeaks[params->RpeakIndexCounter] = params->peaks[peakIndexCounter]; // Store x_n in the R peak array
 			params->RpeakToRpeak[params->RpeakIndexCounter] = params->RtoRcounter; // Add the time the R peak was found
 			addRecentRR(params);
 

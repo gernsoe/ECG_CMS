@@ -8,6 +8,7 @@
 #include <limits.h>
 
 
+
 int main()
 {	
 	//Define stuff-----------------
@@ -38,6 +39,7 @@ int main()
     qsr_params.RR_Average1 = 0;
     qsr_params.RR_Average2 = 0;
     qsr_params.RR_WarningCounter = 0;
+    qsr_params.RpeakIndexCounter = 0;
     memset(qsr_params.RecentRR, 0, sizeof(int)*8);
     memset(qsr_params.RecentRR_OK, 0, sizeof(int)*8);
     memset(qsr_params.peaks, 0, sizeof(int)*100);
@@ -86,6 +88,7 @@ int main()
 				break;
 			}
 			//-------------------
+
 
 
 			//Apply filters
@@ -155,7 +158,6 @@ int main()
 	fclose(fRpeak);
 	fclose(fSearchBack);
 	//------------------
-
 
 	return 0;
 }
