@@ -1,6 +1,7 @@
 #include "sensor.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 int getNextData(FILE *file)
 {
@@ -8,9 +9,8 @@ int getNextData(FILE *file)
 
 	if(!(fscanf(file,"%i",&value) == 1)){
 		printf("End of file");
-		return -9999;
+		return INT_MIN;
 	}
-
     return value; // return sensor value
 }
 
@@ -19,6 +19,7 @@ FILE* openfile(const char *filename)
 	FILE* file;
 	if((file = fopen(filename,"r")) == 0){
 		printf("File not found");
+		return NULL;
 	}
 	return file;
 }

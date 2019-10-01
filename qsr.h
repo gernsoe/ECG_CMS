@@ -4,7 +4,7 @@
 // Header file for QRS functionality 
 // it is recommended to use the structure "QRS_parameters"
 // to organize all variables and parameters
-
+int RpeakIndexCounter;
 typedef struct QRS_params
 { // Structure for QRS parameters
    int SPKF;					// Estimated average Rpeak value
